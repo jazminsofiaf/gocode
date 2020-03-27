@@ -160,7 +160,7 @@ func processAddrMessage(targetAddress string, payload []byte) int {
       services:=payload[addrBeginsat+4:addrBeginsat+12]
       ipAddr := payload[addrBeginsat+12 : addrBeginsat+28]
       port := payload[addrBeginsat+28 : addrBeginsat+30]
-      // fmt.Println("Received : ", net.IP.String(ipAddr))
+      fmt.Println("Received : ", net.IP.String(ipAddr))
       newPeer := fmt.Sprintf("[%s]:%d", net.IP.String(ipAddr), binary.BigEndian.Uint16(port))
       peerrecordstring := fmt.Sprintf("PAR\t[%s]:%d\t%v\t%v\t%v\t%v\t%v\n", net.IP.String(ipAddr), binary.BigEndian.Uint16(port), timetime.String(), time.Since(timetime), time.Now().String(), services, targetAddress)
       storeEvent(peerrecordstring)
@@ -238,7 +238,7 @@ func handleIncommingMessages(targetAddress string, inChan chan []string, rawConn
       }
       continue
     }
-    // fmt.Println("->", command)
+    fmt.Println("->", command)
     continue
   }
 }
@@ -256,21 +256,21 @@ func checkPoolSizes(){
 
 func handleOnePeer(agentNumber int, connectionStartChannel chan string) {
   for {
-    // fmt.Println("POOL reading agent ", agentNumber)
+    fmt.Println("POOL reading agent ", agentNumber)
     targetaddress := <- connectionStartChannel
-    // fmt.Println("POOL unlock agent ", agentNumber, targetaddress)
+    fmt.Println("POOL unlock agent ", agentNumber, targetaddress)
 
-    // fmt.Println("Targeting |" + targetaddress + "|")
+    fmt.Println("Targeting |" + targetaddress + "|")
     conn, err := net.DialTimeout("tcp", targetaddress, time.Duration(600*time.Millisecond))
     if err != nil {
-      // fmt.Println("Failed on connect " + targetaddress)
+      fmt.Println("Failed on connect " + targetaddress)
       retryAddress(targetaddress)
-      // fmt.Println("POOL Failed on connect " + targetaddress + " " + err.Error())
+      fmt.Println("POOL Failed on connect " + targetaddress + " " + err.Error())
       // io.Copy(peerLogFile, strings.NewReader(fmt.Sprintf("ERR %s\n", targetaddress)))
     } else {
 
       for {
-        // fmt.Println("Connected to " + targetaddress)
+        fmt.Println("Connected to " + targetaddress)
         //SFR Pareil ?
         // io.Copy(peerLogFile, strings.NewReader(fmt.Sprintf("Connected to %s\n", targetaddress)))
         inChan := make(chan []string, 10)
@@ -283,7 +283,7 @@ func handleOnePeer(agentNumber int, connectionStartChannel chan string) {
         }
         rcvdMessage := <-inChan
         if rcvdMessage[0] != bcmessage.MSG_VERSION {
-          // fmt.Println("Version Ack not received", rcvdMessage[0])
+          fmt.Println("Version Ack not received", rcvdMessage[0])
           fail(targetaddress)
           break
         }
@@ -295,7 +295,7 @@ func handleOnePeer(agentNumber int, connectionStartChannel chan string) {
         }
         rcvdMessage = <-inChan
         if rcvdMessage[0] != bcmessage.MSG_VERSION_ACK {
-          // fmt.Println("Version AckAck not received")
+          fmt.Println("Version AckAck not received")
           fail(targetaddress)
           break
         }
@@ -322,11 +322,11 @@ func handleOnePeer(agentNumber int, connectionStartChannel chan string) {
 
 func storeEvent(msg string) {
   if peerLogFile != nil {
-    // fmt.Println("fichier")
+    fmt.Println("fichier")
     io.Copy(peerLogFile, strings.NewReader(msg))
   }
   if beatOn {
-    // fmt.Println("beat")
+    fmt.Println("beat")
   }
 }
 
