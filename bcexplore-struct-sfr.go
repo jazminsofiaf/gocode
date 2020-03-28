@@ -144,7 +144,7 @@ func processAddrMessage(targetAddress string, payload []byte) int {
       }
     }
 
-    // fmt.Printf("Received %d addresses\n", addrNumber)
+    fmt.Printf("Received %d addresses\n", addrNumber)
     readAddr := uint64(0)
     for {
       if readAddr == addrNumber {
@@ -346,13 +346,13 @@ func main() {
 
   for {
     // time.Sleep(time.Duration((1) * time.Millisecond))
-    //fmt.Printf("MAIN: NUMGOROUTINE : %v\n",runtime.NumGoroutine())
-    //fmt.Printf("Checking for new peer\n")
+    fmt.Printf("MAIN: NUMGOROUTINE : %v\n",runtime.NumGoroutine())
+    fmt.Printf("Checking for new peer\n")
     newPeer := <-addressChannel
     if isWaiting(newPeer) { //Peer Inconnu
       atomic.AddInt32(&addressesToTest, 1)
       connectionStartChannel <- newPeer
-      //fmt.Printf("Peer %s to be contacted, known peers : %d\n", newPeer, len(addressesVisited))
+      fmt.Printf("Peer %s to be contacted, known peers : %d\n", newPeer, len(addressesVisited))
       //SFR Mode info ?
       // io.Copy(peerLogFile, strings.NewReader(fmt.Sprintf("NEW Address received %s\n",newPeer )))
     }

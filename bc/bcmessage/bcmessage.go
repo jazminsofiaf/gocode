@@ -70,7 +70,7 @@ func init() {
 //  SendRequest to a peer returns err
 //  ReadMessage from a Peer return command, payload, err
 func SendRequest(conn net.Conn, messageName string) error {
-  // fmt.Println("Sending ", messageName)
+  fmt.Println("Sending ", messageName)
   _, err := conn.Write(BuildRequest(messageName))
   if err != nil {
     fmt.Println("Error on sending",  messageName, err.Error())
@@ -84,7 +84,7 @@ func ReadMessage(conn io.Reader) (string, []byte, error)  {
   headerBuf := make([]byte, HEADERSIZE)
   _, err := io.ReadFull(conn, headerBuf)
   if err != nil {
-    // fmt.Println("Erreur lecture header " + err.Error())
+    fmt.Println("Erreur lecture header " + err.Error())
     return "", []byte{}, err
   }
 
@@ -93,7 +93,7 @@ func ReadMessage(conn io.Reader) (string, []byte, error)  {
   payloadSize := binary.LittleEndian.Uint32(headerBuf[START_PAYLOADLENGTH:END_PAYLOADLENGTH])
   // checkChecksum(headerBuf[])...
 
-  // fmt.Printf("Command %v PAYLOADSIZE %d\n",  command, payloadSize)
+  fmt.Printf("Command %v PAYLOADSIZE %d\n",  command, payloadSize)
 
   if payloadSize > 0 {
     payload = make([]byte, payloadSize) // Lecture payload
@@ -108,7 +108,7 @@ func ReadMessage(conn io.Reader) (string, []byte, error)  {
 
 // SENDING
 func BuildRequest(messageName string) [] byte {
-  // fmt.Println(messageName)
+  fmt.Println(messageName)
   payloadBytes := []byte{}
   if messageName == MSG_VERSION {
     payloadBytes = getPayloadWithCurrentDate()
