@@ -164,7 +164,7 @@ func processAddrMessage(targetAddress string, payload []byte) int {
       newPeer := fmt.Sprintf("[%s]:%d", net.IP.String(ipAddr), binary.BigEndian.Uint16(port))
       peerrecordstring := fmt.Sprintf("PAR\t[%s]:%d\t%v\t%v\t%v\t%v\t%v\n", net.IP.String(ipAddr), binary.BigEndian.Uint16(port), timetime.String(), time.Since(timetime), time.Now().String(), services, targetAddress)
       storeEvent(peerrecordstring)
-      // io.Copy(peerLogFile, strings.NewReader(peerrecordstring))
+      io.Copy(peerLogFile, strings.NewReader(peerrecordstring))
       addressChannel <- newPeer
       readAddr++
     }
@@ -206,7 +206,7 @@ func processVersionMessage(peerID string, payload []byte){
     }
   }
   storeEvent(fmt.Sprintf("PVM\t%s\t%v\t%s\t%v\t%v\t%v\t%v\n",peerID,versionNumber,useragentString, peertimestamp.String(), time.Since(peertimestamp), servicesbuf[:],time.Now().String()))
-  // io.Copy(peerLogFile, strings.NewReader(fmt.Sprintf("PVM  %s  %v  %s  %v  %v  %v  %v\n",peerID,versionNumber,useragentString, peertimestamp.String(), time.Since(peertimestamp), servicesbuf[:],time.Now().String())))
+  io.Copy(peerLogFile, strings.NewReader(fmt.Sprintf("PVM  %s  %v  %s  %v  %v  %v  %v\n",peerID,versionNumber,useragentString, peertimestamp.String(), time.Since(peertimestamp), servicesbuf[:],time.Now().String())))
   registerPVMConnection(peerID)
 }
 
@@ -266,13 +266,13 @@ func handleOnePeer(agentNumber int, connectionStartChannel chan string) {
       fmt.Println("Failed on connect " + targetaddress)
       retryAddress(targetaddress)
       fmt.Println("POOL Failed on connect " + targetaddress + " " + err.Error())
-      // io.Copy(peerLogFile, strings.NewReader(fmt.Sprintf("ERR %s\n", targetaddress)))
+      io.Copy(peerLogFile, strings.NewReader(fmt.Sprintf("ERR %s\n", targetaddress)))
     } else {
 
       for {
         fmt.Println("Connected to " + targetaddress)
         //SFR Pareil ?
-        // io.Copy(peerLogFile, strings.NewReader(fmt.Sprintf("Connected to %s\n", targetaddress)))
+        io.Copy(peerLogFile, strings.NewReader(fmt.Sprintf("Connected to %s\n", targetaddress)))
         inChan := make(chan []string, 10)
         go handleIncommingMessages(targetaddress, inChan, conn)
 
@@ -354,7 +354,7 @@ func main() {
       connectionStartChannel <- newPeer
       fmt.Printf("Peer %s to be contacted, known peers : %d\n", newPeer, len(addressesVisited))
       //SFR Mode info ?
-      // io.Copy(peerLogFile, strings.NewReader(fmt.Sprintf("NEW Address received %s\n",newPeer )))
+      io.Copy(peerLogFile, strings.NewReader(fmt.Sprintf("NEW Address received %s\n",newPeer )))
     }
   }
 }
