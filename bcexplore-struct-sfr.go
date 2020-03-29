@@ -18,7 +18,6 @@ import "bc/bcmessage"
 const NBGOROUTINES = 800
 
 var connectionStartChannel chan string
-
 var beatOn bool
 
 var peerLogFile *os.File
@@ -162,9 +161,8 @@ func processAddrMessage(targetAddress string, payload []byte) int {
       port := payload[addrBeginsat+28 : addrBeginsat+30]
       fmt.Println("Received : ", net.IP.String(ipAddr))
       newPeer := fmt.Sprintf("[%s]:%d", net.IP.String(ipAddr), binary.BigEndian.Uint16(port))
-      peerrecordstring := fmt.Sprintf("PAR\t[%s]:%d\t%v\t%v\t%v\t%v\t%v\n", net.IP.String(ipAddr), binary.BigEndian.Uint16(port), timetime.String(), time.Since(timetime), time.Now().String(), services, targetAddress)
+      peerrecordstring := fmt.Sprintf("PAR\t address=[%s]:%d\t time=%v\t since=%v\t now=%v\t service=%v\t address=%v\n", net.IP.String(ipAddr), binary.BigEndian.Uint16(port), timetime.String(), time.Since(timetime), time.Now().String(), services, targetAddress)
       storeEvent(peerrecordstring)
-      io.Copy(peerLogFile, strings.NewReader(peerrecordstring))
       addressChannel <- newPeer
       readAddr++
     }
@@ -253,6 +251,7 @@ func checkPoolSizes(){
     }
   }
 }
+
 
 func handleOnePeer(agentNumber int, connectionStartChannel chan string) {
   for {
@@ -364,3 +363,17 @@ func cleanAll() {
     peerLogFile.Close()
   }
 }
+
+
+
+func setGlobalVarForTest( testBeatOnTest bool, testOutputFile string){
+  beatOn = testBeatOnTest
+  if(beatOn == true){
+    return
+  }
+  peerLogFile, _ = os.Create(testOutputFile)
+}
+
+
+
+
