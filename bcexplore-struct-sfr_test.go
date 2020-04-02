@@ -11,7 +11,7 @@ func check(e error) {
 	}
 }
 
-func TestHello(t *testing.T) {
+func TestStoreEvent(t *testing.T) {
 	setGlobalVarForTest(false, "../src/testOutput")
 	var message = "this is a message to write in file output."
 	storeEvent(message)
